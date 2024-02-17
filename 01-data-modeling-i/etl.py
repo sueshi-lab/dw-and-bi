@@ -150,7 +150,6 @@ def process(cur, conn, filepath):
                         actor_id,
                         repo_id,
                         org_id,
-                        is_public,
                         created_at
                     ) VALUES (
                         {each["id"]}, 
@@ -158,7 +157,6 @@ def process(cur, conn, filepath):
                         {each["actor"]["id"]},
                         {each["repo"]["id"]}, 
                         {'NULL' if "org" not in each or "id" not in each["org"] else each["org"]["id"]},
-                        {each["public"]}, 
                         '{each["created_at"]}'
                     )
                     ON CONFLICT (id) DO NOTHING

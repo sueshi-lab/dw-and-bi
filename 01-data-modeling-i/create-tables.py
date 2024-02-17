@@ -46,7 +46,6 @@ table_create_events = """
         actor_id int,
         repo_id int,
         org_id int,
-        is_public boolean,
         created_at timestamp,
         PRIMARY KEY(id),
         CONSTRAINT fk_type FOREIGN KEY(type_id) REFERENCES event_types(id),
