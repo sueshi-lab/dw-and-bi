@@ -5,27 +5,58 @@ from typing import List
 
 from cassandra.cluster import Cluster
 
+table_drop_actors = "DROP TABLE IF EXISTS actors"
+table_drop_repos = "DROP TABLE IF EXISTS repos"
+table_drop_events = "DROP TABLE IF EXISTS events"
 
-table_drop = "DROP TABLE events"
+table_create_actors = """
+    CREATE TABLE IF NOT EXISTS actors
+    (
+        id text,
+        login text,
+        url text,
+        avatar_url text,
+        PRIMARY KEY (
+            id
+        )
+    )
+"""
 
-table_create = """
+table_create_repos = """
+    CREATE TABLE IF NOT EXISTS repos
+    (
+        id text,
+        name text,
+        url text,
+        PRIMARY KEY (
+            id
+        )
+    )
+"""
+table_create_events = """
     CREATE TABLE IF NOT EXISTS events
     (
         id text,
-        type text,
+        type_id text,
+        actor_id text,
+        repo_id text,
+        created_at timestamp,
         public boolean,
         PRIMARY KEY (
-            id,
-            type
+            id
         )
     )
 """
 
 create_table_queries = [
-    table_create,
+    table_create_actors,
+    table_create_repos,
+    table_create_events
 ]
 drop_table_queries = [
-    table_drop,
+    table_drop_actors,
+    table_drop_repos,
+    table_drop_events,
 ]
 
 def drop_tables(session):
@@ -72,8 +103,23 @@ def process(session, filepath):
                 # Print some sample data
                 print(each["id"], each["type"], each["actor"]["login"])
 
-                # Insert data into tables here
-
+                #Insert data into tables here
+                query = f"""
+                   INSERT INTO events (
+                        id,
+                        type_id,
+                        actor_id,
+                        repo_id,
+                        created_at,
+                        public) 
+                    VALUES ('{each["id"]}', 
+                            '{type_id}', 
+                            '{each["actor"]["id"]}',
+                            '{each["repo"]["id"]}',
+                            '{each["created_at"]}',
+                            {each["public"]})
+                """
+                session.execute(query)
 
 def insert_sample_data(session):
     query = f"""
@@ -106,12 +152,11 @@ def main():
     drop_tables(session)
     create_tables(session)
 
-    # process(session, filepath="../data")
-    insert_sample_data(session)
+    process(session, filepath="../data")
 
     # Select data in Cassandra and print them to stdout
     query = """
-    SELECT * from events WHERE id = '23487929637' AND type = 'IssueCommentEvent'
+        SELECT * from events
     """
     try:
         rows = session.execute(query)
