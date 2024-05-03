@@ -36,13 +36,13 @@ def main(dataset_id, table_id, file_path):
     # keyfile = os.environ.get("KEYFILE_PATH")
     #
     # แต่เพื่อความง่ายเราสามารถกำหนด File Path ไปได้เลยตรง ๆ
-    keyfile = "../credentials/dataengineercafe-swu-ds525-load-data-to-bigquery-2fd0543bb96f.json"
+    keyfile = os.environ.get('KEY_FILE')
     service_account_info = json.load(open(keyfile))
     credentials = service_account.Credentials.from_service_account_info(service_account_info)
 
     # โค้ดส่วนนี้จะเป็นการสร้าง Client เชื่อมต่อไปยังโปรเจค GCP ของเรา โดยใช้ Credentials ที่
     # สร้างจากโค้ดข้างต้น
-    project_id = "dataengineercafe"
+    project_id = os.environ.get('PROJECT_ID')
     client = bigquery.Client(
         project=project_id,
         credentials=credentials,
@@ -81,18 +81,18 @@ if __name__ == "__main__":
         writer = csv.writer(csv_file)
         writer.writerow([
             "id",
-            "type", 
-            "login",
+            "type",
+            "actor"
         ])
-
         for datafile in all_files:
             with open(datafile, "r") as f:
                 data = json.loads(f.read())
                 for each in data:
                     writer.writerow([
-                        each["id"],
+                        each["id"], 
                         each["type"],
-                        each["actor"]["login"],
+                        each["actor"]["id"]
                     ])
+                    
 
     main(dataset_id="github", table_id="events", file_path="github_events.csv")
