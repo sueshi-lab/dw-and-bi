@@ -1,5 +1,2 @@
 # Ignore environment configuration files
-.env
-config.ini
-config.yaml
-config.json
+ENV
