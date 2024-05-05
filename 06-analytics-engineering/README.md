@@ -47,6 +47,11 @@ run project ds525
 dbt run
 ```
 
+test project ds525
+```bash
+dbt test
+```
+
 open service sqlpad
 ```sql
 select * from public.my_first_dbt_model
@@ -57,4 +62,23 @@ create new model
 ```bash
 echo "select 1+1+1" > my_simple_model.sql
 dbt run
+```
+
+try to create models for jaffle shop!
+1. create staging/_src
+2. create staging/stg__jaffle_shop_customers.sql
+3. create staging/stg__jaffle_shop_orders.sql
+4. create mart/jaffle_shop_obt.sql
+
+config all models are view + define suffix in dbt_project.yml
+```yml
+models:
+  ds525:
+    example:
+      +materialized: view
+    staging:
+      +materialized: view
+      +schema: staging
+    mart: 
+      +schema: mart
 ```
