@@ -1,1 +1,1 @@
-select 1 + 1 as sum
+select 1+1+1

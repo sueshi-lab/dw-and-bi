@@ -5,7 +5,7 @@ ds525:
       host: localhost
       pass: postgres
       port: 5432
-      schema: dbt_kan
+      schema: public
       threads: 1
       type: postgres
       user: postgres
